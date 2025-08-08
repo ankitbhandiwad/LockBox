@@ -88,13 +88,13 @@ class _VaultPageState extends State<VaultPage> {
           return Padding(padding: EdgeInsets.all(8),
             child: Card(
               child: ListTile(
-                onTap: () {
+                onTap: () { //text editor
                   setState(() {
-                    
+                    main.activeitem = main.activevault.itemList[index];
                   });
+                  Navigator.pushNamed(context, '/textpad');
                   
                 },
-                // leading: Icon(Icons.usb),
                 title: Text(main.activevault.itemList[index].fileId),
                 subtitle: ElevatedButton
                 (

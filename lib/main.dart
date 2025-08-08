@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vault/classes/items.dart';
+import 'package:vault/classes/textpad.dart';
 import 'package:vault/classes/vault.dart';
 
 void main()
@@ -8,6 +10,7 @@ void main()
     routes: {
       '/home': (context) => Home(),
       '/vault': (context) => VaultPage(),
+      '/textpad': (context) => Textpad(),
     },
   )
   );
@@ -15,6 +18,7 @@ void main()
 
 List<Vault> vaultlist = [];
 late Vault activevault;
+late Item activeitem;
 late String userinputname;
 late String userinputpassword;
 
@@ -97,7 +101,24 @@ class _HomeState extends State<Home> {
               child: ListTile(
                 onTap: () {
                   setState(() {
-                    activevault = vaultlist[index];
+                    // activevault = vaultlist[index];
+                    showDialog(context: context,
+                    builder: (BuildContext context)
+                    {
+                      return AlertDialog(
+                        content: Column(
+                          children: [
+                            TextField(
+                              decoration: InputDecoration(
+                                hintText: Text("")
+                              ),
+                            )
+                          ],
+                        )
+                      );
+                    }
+                    );
+                    
                   });
                   Navigator.pushNamed(context, '/vault');
                 },
