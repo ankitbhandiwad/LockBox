@@ -100,7 +100,7 @@ class _VaultPageState extends State<VaultPage> {
                 (
                   onPressed: () {
                     setState(() {
-                      
+                      main.activevault.itemList.removeAt(index);
                     });
                   },
                   child: Icon(Icons.delete)
