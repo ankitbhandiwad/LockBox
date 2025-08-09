@@ -17,10 +17,12 @@ void main()
 }
 
 List<Vault> vaultlist = [];
-late Vault activevault;
+late Vault? activevault;
+late Vault? activevaultpass;
 late Item activeitem;
 late String userinputname;
 late String userinputpassword;
+late String userinputguess;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -71,13 +73,14 @@ class _HomeState extends State<Home> {
                         },
                       ),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: ()
+                        {
                         setState(() {
                           vaultlist.add(Vault(password: userinputpassword, name: userinputname));
                         });
                         Navigator.of(context).pop();
-                      },
-                      child: Text("Submit"),
+                        },
+                        child: Text("Submit"),
                       )
                       
                     ],
@@ -101,8 +104,9 @@ class _HomeState extends State<Home> {
               child: ListTile(
                 onTap: () {
                   setState(() {
-                    // activevault = vaultlist[index];
-                    showDialog(context: context,
+                    activevaultpass = vaultlist[index];
+                  });
+                  showDialog(context: context,
                     builder: (BuildContext context)
                     {
                       return AlertDialog(
@@ -110,17 +114,34 @@ class _HomeState extends State<Home> {
                           children: [
                             TextField(
                               decoration: InputDecoration(
-                                hintText: Text("")
+                                hintText: 'Vault Password',
                               ),
-                            )
+                              onChanged: (value) {
+                                userinputguess = value;
+                              }
+                            ),
+                              ElevatedButton(onPressed: () {
+                                if (userinputguess == activevaultpass!.password)
+                                {
+                                  setState(() {
+                                    activevault = vaultlist[index];
+                                    activevaultpass = null;
+                                  });
+                                  Navigator.of(context).pop();
+                                  Navigator.pushNamed(context, '/vault');
+                                }
+                                else
+                                {
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: Text("Submit"))
                           ],
                         )
                       );
                     }
                     );
-                    
-                  });
-                  Navigator.pushNamed(context, '/vault');
+
                 },
                 // leading: Icon(Icons.usb),
                 title: Text(vaultlist[index].name),

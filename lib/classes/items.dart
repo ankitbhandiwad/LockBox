@@ -6,11 +6,12 @@ class Item
   late String fileId;
   late dynamic dir;
   late dynamic file;
+  late String type;
   void getDirandFile() async
   {
-    dir = getApplicationDocumentsDirectory();
+    dir = await getApplicationDocumentsDirectory();
     file = File('${dir.path}/$fileId');
   }
 
-  Item({required this.fileId});
+  Item({required this.fileId, required this.type});
 }

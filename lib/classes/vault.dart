@@ -27,62 +27,77 @@ class VaultPage extends StatefulWidget {
 class _VaultPageState extends State<VaultPage> {
   
 
-  Vault vault = main.activevault;
+  Vault vault = main.activevault!;
   late String userinputfileId;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(main.activevault.name),
+        title: Text(main.activevault!.name),
         actions: [
-          ElevatedButton(
-            onPressed: () {
-              // setState(() {
-              //   vaultlist.add(Vault(password: "111", name: "my first vault!"));
-              // });
-
-              showDialog(context: context,
-              builder: (BuildContext context)
-              {
-                return AlertDialog(
-                  content: Column(
-                    children: [
-                      TextField( //userinputname
-                        decoration: InputDecoration(
-                          hintText: 'Item Name'
+              PopupMenuButton<String>(
+                onSelected: (value)
+                {
+                  if (value == 'text')
+                  {
+                    showDialog(context: context,
+                    builder: (BuildContext context)
+                    {
+                      return AlertDialog(
+                        content: Column(
+                          children: [
+                            TextField( //userinputname
+                              decoration: InputDecoration(
+                                hintText: 'Item Name'
+                              ),
+                              onChanged: (value)
+                              {
+                                setState(() {
+                                  userinputfileId = value;
+                                });
+                              },
+                            ),
+                            ElevatedButton( //dialog submit button
+                              onPressed: () {
+                              setState(() {
+                                main.activevault!.itemList.add(Item(fileId: userinputfileId, type: 'text'));
+                              });
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("Submit"),
+                            )
+                            
+                          ],
                         ),
-                        onChanged: (value)
-                        {
-                          setState(() {
-                            userinputfileId = value;
-                          });
-                        },
-                      ),
-                      ElevatedButton( //dialog submit button
-                        onPressed: () {
-                        setState(() {
-                          main.activevault.itemList.add(Item(fileId: userinputfileId));
-                        });
-                        Navigator.of(context).pop();
-                      },
-                      child: Text("Submit"),
-                      )
-                      
-                    ],
+                      );
+                    }
+                    );
+                  }
+                  if (value == 'image')
+                  {
+                    print('chose image');
+                  }
+                },
+                itemBuilder: (context) =>
+                [
+                  const PopupMenuItem(
+                    value: 'text',
+                    child: Text('Text'),
                   ),
-                );
-              }
-              );
+                  const PopupMenuItem(
+                    value: 'image',
+                    child: Text('Image'),
+                  ),
+                ],
+                child: Icon(Icons.add),
+              ),
 
-            },
-            child: Icon(Icons.add)
-          ),
         ],
       ),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3), 
-        itemCount: main.activevault.itemList.length,
+        itemCount: main.activevault!.itemList.length,
         itemBuilder: (context, index)
         {
           return Padding(padding: EdgeInsets.all(8),
@@ -90,17 +105,21 @@ class _VaultPageState extends State<VaultPage> {
               child: ListTile(
                 onTap: () { //text editor
                   setState(() {
-                    main.activeitem = main.activevault.itemList[index];
-                  });
-                  Navigator.pushNamed(context, '/textpad');
+                      main.activeitem = main.activevault!.itemList[index];
+                    });
+                  if (main.activeitem.type == 'text')
+                  {
+                    main.activeitem.getDirandFile();
+                    Navigator.pushNamed(context, '/textpad');
                   
+                  }
                 },
-                title: Text(main.activevault.itemList[index].fileId),
+                title: Text(main.activevault!.itemList[index].fileId),
                 subtitle: ElevatedButton
                 (
                   onPressed: () {
                     setState(() {
-                      main.activevault.itemList.removeAt(index);
+                      main.activevault!.itemList.removeAt(index);
                     });
                   },
                   child: Icon(Icons.delete)

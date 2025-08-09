@@ -1,10 +1,13 @@
 every 'item' must have a path an accessible File object as part of its data
-the File object is made through final file = File('${dir.path}/$filename');
+the File object is made through final file = File('${dir.path}/$filename'); //DONE
 
 the item class must have a method that allows you to write to it with await file.writeAsString(contents); where
-contents is the text in the text editor
+contents is the text in the text editor //DONE
 
-make password necessary to enter vault
+make password necessary to enter vault //DONE
 
 export everything feature
 download specific file feature
+
+add markdown to editor
+add images
