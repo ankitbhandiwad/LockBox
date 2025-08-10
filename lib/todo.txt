@@ -11,3 +11,5 @@ download specific file feature
 
 add markdown to editor
 add images
+
+setting: hide vault/item

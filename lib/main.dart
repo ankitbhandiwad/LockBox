@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vault/classes/imageviewer.dart';
 import 'package:vault/classes/items.dart';
 import 'package:vault/classes/textpad.dart';
 import 'package:vault/classes/vault.dart';
@@ -11,6 +12,7 @@ void main()
       '/home': (context) => Home(),
       '/vault': (context) => VaultPage(),
       '/textpad': (context) => Textpad(),
+      '/imageview': (context) => ImageView(),
     },
   )
   );
@@ -147,7 +149,16 @@ class _HomeState extends State<Home> {
                 title: Text(vaultlist[index].name),
                 subtitle: ElevatedButton
                 (
-                  onPressed: () {
+                  onPressed: () async {
+
+                    for (int i = 0; i < activevault!.itemList.length; i++)
+                    {
+                      if (await activevault!.itemList[i].file.exists())
+                      {
+                        await activevault!.itemList[i].file.delete();
+                      }
+                    }
+
                     setState(() {
                       vaultlist.removeAt(index);
                     });

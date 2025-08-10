@@ -1,6 +1,9 @@
+import 'dart:ffi';
+
 import 'package:vault/classes/items.dart';
 import 'package:flutter/material.dart';
 import 'package:vault/main.dart' as main;
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 
 class Vault
 {
@@ -77,6 +80,9 @@ class _VaultPageState extends State<VaultPage> {
                   if (value == 'image')
                   {
                     print('chose image');
+                    setState(() {
+                      main.activevault!.itemList.add(Item(fileId: 'test image', type: 'image'));
+                    });
                   }
                 },
                 itemBuilder: (context) =>
@@ -102,28 +108,48 @@ class _VaultPageState extends State<VaultPage> {
         {
           return Padding(padding: EdgeInsets.all(8),
             child: Card(
-              child: ListTile(
-                onTap: () { //text editor
-                  setState(() {
-                      main.activeitem = main.activevault!.itemList[index];
-                    });
-                  if (main.activeitem.type == 'text')
-                  {
-                    main.activeitem.getDirandFile();
-                    Navigator.pushNamed(context, '/textpad');
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ListTile(
+                    onTap: () { 
+                      setState(() {
+                          main.activeitem = main.activevault!.itemList[index];
+                        });
+                      if (main.activeitem.type == 'text') //text editor
+                      {
+                        main.activeitem.getDirandFile();
+                        Navigator.pushNamed(context, '/textpad');
+                      
+                      }
+                      if (main.activeitem.type == 'image')
+                      {
+                        // Navigator.pushNamed(context, '/imageview');
                   
-                  }
-                },
-                title: Text(main.activevault!.itemList[index].fileId),
-                subtitle: ElevatedButton
-                (
-                  onPressed: () {
-                    setState(() {
-                      main.activevault!.itemList.removeAt(index);
-                    });
-                  },
-                  child: Icon(Icons.delete)
-                ),
+                      }
+                    },
+                    title: Text(main.activevault!.itemList[index].fileId),
+                    subtitle: ElevatedButton
+                    (
+                      onPressed: () async {
+                        if (await main.activevault!.itemList[index].file.exists())
+                          {
+                            await main.activevault!.itemList[index].file.delete();
+                          }
+                        setState(() {
+                          main.activevault!.itemList.removeAt(index);
+                        });
+                      },
+                      child: Icon(Icons.delete)
+                    ),
+                  ),
+                  SizedBox(
+                    child: main.activevault!.itemList[index].type == 'image' ?
+                    AspectRatio(aspectRatio: 1,
+                    child: InstaImageViewer(child: Image.network("https://picsum.photos/id/507/1000", fit: BoxFit.cover,)))
+                  : Container(),
+                  ),
+                ],
               ),
             ),
           );
