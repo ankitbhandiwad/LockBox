@@ -1,0 +1,50 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:better_player_plus/better_player_plus.dart';
+import 'package:vault/main.dart' as main;
+
+class VideoView extends StatefulWidget {
+  const VideoView({super.key});
+
+  @override
+  State<VideoView> createState() => _VideoViewState();
+}
+
+class _VideoViewState extends State<VideoView> {
+  @override
+  Widget build(BuildContext context) {
+    final file = File(main.activeitem.dir);
+    final betterPlayerController = BetterPlayerController(
+      const BetterPlayerConfiguration(
+        autoPlay: false,
+        looping: false,
+        subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
+          fontSize: 16,
+          fontColor: Colors.white,
+          outlineEnabled: true,
+          outlineColor: Colors.black,
+        ),
+        controlsConfiguration: BetterPlayerControlsConfiguration(
+          enableSubtitles: true,
+          enablePlaybackSpeed: true,
+          enableProgressText: true,
+          enableSkips: true,
+        ),
+      ),
+      betterPlayerDataSource: BetterPlayerDataSource(
+        BetterPlayerDataSourceType.file,
+        file.path,
+      ),
+    );
+
+
+    return Scaffold(
+      body: Center(
+        child: AspectRatio(aspectRatio: 16 / 9,
+        child: BetterPlayer(controller: betterPlayerController),
+        ),
+      ),
+    );
+  }
+}

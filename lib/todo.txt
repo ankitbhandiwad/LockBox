@@ -10,6 +10,11 @@ export everything feature
 download specific file feature
 
 add markdown to editor
-add images
+add images //DONE
 
 setting: hide vault/item
+
+when deleting a vault, delete all files associated with it
+persistent even when app is restarted
+
+add audio, video, and documents

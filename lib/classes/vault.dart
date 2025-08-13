@@ -90,6 +90,29 @@ class _VaultPageState extends State<VaultPage> {
                     await main.activevault!.itemList.last.getDirandFile();
                     dynamic destination = '${main.activevault!.itemList.last.dir.path}/${main.activevault!.itemList.last.fileId}';
                     dynamic source = File(file.paths[i]!);
+                    main.activevault!.itemList.last.dir = destination;
+                    await source.copy(destination);
+                    setState(() {
+                      
+                    });
+                  }
+                }
+              }
+              if (value == 'video') {
+                FilePickerResult? file = await FilePicker.platform.pickFiles(
+                  type: FileType.video,
+                );
+                if (file != null) {
+                  for (int i = 0; i < file.count; i++)
+                  {
+                    
+                    setState(() {
+                      main.activevault!.itemList.add(Item(fileId: file.names[i]!, type: "video"));
+                    });
+                    await main.activevault!.itemList.last.getDirandFile();
+                    dynamic destination = '${main.activevault!.itemList.last.dir.path}/${main.activevault!.itemList.last.fileId}';
+                    dynamic source = File(file.paths[i]!);
+                    main.activevault!.itemList.last.dir = destination;
                     await source.copy(destination);
                     setState(() {
                       
@@ -101,6 +124,7 @@ class _VaultPageState extends State<VaultPage> {
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'text', child: Text('Text')),
               const PopupMenuItem(value: 'image', child: Text('Image')),
+              const PopupMenuItem(value: 'video', child: Text('Video')),
             ],
             child: Icon(Icons.add),
           ),
@@ -130,7 +154,10 @@ class _VaultPageState extends State<VaultPage> {
                           Navigator.pushNamed(context, '/textpad');
                         }
                         if (main.activeitem.type == 'image') {
-                          // Navigator.pushNamed(context, '/imageview');
+                          
+                        }
+                        if (main.activeitem.type == 'video') {
+                          Navigator.pushNamed(context, '/videoview');
                         }
                       },
                       title: Text(main.activevault!.itemList[index].fileId),
@@ -152,8 +179,8 @@ class _VaultPageState extends State<VaultPage> {
                       fit: BoxFit.contain,
                       child: main.activevault!.itemList[index].type == 'image'
                           ? InstaImageViewer(
-                              child: Image.network(
-                                "https://picsum.photos/id/507/1000",
+                              child: Image.asset(
+                                '${main.activevault!.itemList[index].dir}',
                                 fit: BoxFit.contain,
                               ),
                             )

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:vault/classes/imageviewer.dart';
 import 'package:vault/classes/items.dart';
 import 'package:vault/classes/textpad.dart';
 import 'package:vault/classes/vault.dart';
+import 'package:vault/classes/videoviewer.dart';
 
 void main()
 {
@@ -12,7 +12,7 @@ void main()
       '/home': (context) => Home(),
       '/vault': (context) => VaultPage(),
       '/textpad': (context) => Textpad(),
-      '/imageview': (context) => ImageView(),
+      '/videoview': (context) => VideoView(),
     },
   )
   );
