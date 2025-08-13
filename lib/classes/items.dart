@@ -7,7 +7,7 @@ class Item
   late dynamic dir;
   late dynamic file;
   late String type;
-  void getDirandFile() async
+  Future<void> getDirandFile() async
   {
     dir = await getApplicationDocumentsDirectory();
     file = File('${dir.path}/$fileId');

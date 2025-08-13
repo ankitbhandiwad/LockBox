@@ -1,23 +1,21 @@
-import 'dart:ffi';
-
+// import 'dart:ffi';
+import 'dart:io';
 import 'package:vault/classes/items.dart';
 import 'package:flutter/material.dart';
 import 'package:vault/main.dart' as main;
 import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:file_picker/file_picker.dart';
 
-class Vault
-{
+class Vault {
   late String password;
   List<Item> itemList = [];
   late String name;
 
   Vault({required this.password, required this.name});
 
-  void addFile(Item item)
-  {
+  void addFile(Item item) {
     itemList.add(item);
   }
-
 }
 
 class VaultPage extends StatefulWidget {
@@ -28,8 +26,6 @@ class VaultPage extends StatefulWidget {
 }
 
 class _VaultPageState extends State<VaultPage> {
-  
-
   Vault vault = main.activevault!;
   late String userinputfileId;
 
@@ -39,122 +35,137 @@ class _VaultPageState extends State<VaultPage> {
       appBar: AppBar(
         title: Text(main.activevault!.name),
         actions: [
-              PopupMenuButton<String>(
-                onSelected: (value)
-                {
-                  if (value == 'text')
-                  {
-                    showDialog(context: context,
-                    builder: (BuildContext context)
-                    {
-                      return AlertDialog(
-                        content: Column(
-                          children: [
-                            TextField( //userinputname
-                              decoration: InputDecoration(
-                                hintText: 'Item Name'
-                              ),
-                              onChanged: (value)
-                              {
-                                setState(() {
-                                  userinputfileId = value;
-                                });
-                              },
-                            ),
-                            ElevatedButton( //dialog submit button
-                              onPressed: () {
+          PopupMenuButton<String>(
+            onSelected: (value) async {
+              if (value == 'text') {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Column(
+                        children: [
+                          TextField(
+                            //userinputname
+                            decoration: InputDecoration(hintText: 'Item Name'),
+                            onChanged: (value) {
                               setState(() {
-                                main.activevault!.itemList.add(Item(fileId: userinputfileId, type: 'text'));
+                                userinputfileId = value;
+                              });
+                            },
+                          ),
+                          ElevatedButton(
+                            //dialog submit button
+                            onPressed: () {
+                              setState(() {
+                                main.activevault!.itemList.add(
+                                  Item(fileId: userinputfileId, type: 'text'),
+                                );
                               });
                               Navigator.of(context).pop();
                             },
                             child: Text("Submit"),
-                            )
-                            
-                          ],
-                        ),
-                      );
-                    }
+                          ),
+                        ],
+                      ),
                     );
-                  }
-                  if (value == 'image')
+                  },
+                );
+              }
+              if (value == 'image') {
+                // print('chose image');
+                // setState(() {
+                //   main.activevault!.itemList.add(Item(fileId: 'test image', type: 'image'));
+                // });
+                FilePickerResult? file = await FilePicker.platform.pickFiles(
+                  type: FileType.image,
+                );
+                if (file != null) {
+                  // main.activevault!.itemList.add(Item(fileId: file.names[0]))
+                  for (int i = 0; i < file.count; i++)
                   {
-                    print('chose image');
+                    
                     setState(() {
-                      main.activevault!.itemList.add(Item(fileId: 'test image', type: 'image'));
+                      main.activevault!.itemList.add(Item(fileId: file.names[i]!, type: "image"));
+                    });
+                    await main.activevault!.itemList.last.getDirandFile();
+                    dynamic destination = '${main.activevault!.itemList.last.dir.path}/${main.activevault!.itemList.last.fileId}';
+                    dynamic source = File(file.paths[i]!);
+                    await source.copy(destination);
+                    setState(() {
+                      
                     });
                   }
-                },
-                itemBuilder: (context) =>
-                [
-                  const PopupMenuItem(
-                    value: 'text',
-                    child: Text('Text'),
-                  ),
-                  const PopupMenuItem(
-                    value: 'image',
-                    child: Text('Image'),
-                  ),
-                ],
-                child: Icon(Icons.add),
-              ),
-
+                }
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'text', child: Text('Text')),
+              const PopupMenuItem(value: 'image', child: Text('Image')),
+            ],
+            child: Icon(Icons.add),
+          ),
         ],
       ),
       body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3), 
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+        ),
         itemCount: main.activevault!.itemList.length,
-        itemBuilder: (context, index)
-        {
-          return Padding(padding: EdgeInsets.all(8),
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: EdgeInsets.all(8),
             child: Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ListTile(
-                    onTap: () { 
-                      setState(() {
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ListTile(
+                      onTap: () {
+                        setState(() {
                           main.activeitem = main.activevault!.itemList[index];
                         });
-                      if (main.activeitem.type == 'text') //text editor
-                      {
-                        main.activeitem.getDirandFile();
-                        Navigator.pushNamed(context, '/textpad');
-                      
-                      }
-                      if (main.activeitem.type == 'image')
-                      {
-                        // Navigator.pushNamed(context, '/imageview');
-                  
-                      }
-                    },
-                    title: Text(main.activevault!.itemList[index].fileId),
-                    subtitle: ElevatedButton
-                    (
-                      onPressed: () async {
-                        if (await main.activevault!.itemList[index].file.exists())
-                          {
-                            await main.activevault!.itemList[index].file.delete();
-                          }
-                        setState(() {
-                          main.activevault!.itemList.removeAt(index);
-                        });
+                        if (main.activeitem.type == 'text') //text editor
+                        {
+                          main.activeitem.getDirandFile();
+                          Navigator.pushNamed(context, '/textpad');
+                        }
+                        if (main.activeitem.type == 'image') {
+                          // Navigator.pushNamed(context, '/imageview');
+                        }
                       },
-                      child: Icon(Icons.delete)
+                      title: Text(main.activevault!.itemList[index].fileId),
+                      subtitle: ElevatedButton(
+                        onPressed: () async {
+                          if (await main.activevault!.itemList[index].file
+                              .exists()) {
+                            await main.activevault!.itemList[index].file
+                                .delete();
+                          }
+                          setState(() {
+                            main.activevault!.itemList.removeAt(index);
+                          });
+                        },
+                        child: Icon(Icons.delete),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    child: main.activevault!.itemList[index].type == 'image' ?
-                    AspectRatio(aspectRatio: 1,
-                    child: InstaImageViewer(child: Image.network("https://picsum.photos/id/507/1000", fit: BoxFit.cover,)))
-                  : Container(),
-                  ),
-                ],
+                    FittedBox(
+                      fit: BoxFit.contain,
+                      child: main.activevault!.itemList[index].type == 'image'
+                          ? InstaImageViewer(
+                              child: Image.network(
+                                "https://picsum.photos/id/507/1000",
+                                fit: BoxFit.contain,
+                              ),
+                            )
+                          : Container(),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
-        }
-        ),
+        },
+      ),
     );
   }
 }
