@@ -17,6 +17,7 @@ class _VideoViewState extends State<VideoView> {
     final file = File(main.activeitem.dir);
     final betterPlayerController = BetterPlayerController(
       const BetterPlayerConfiguration(
+        fit: BoxFit.contain,
         autoPlay: false,
         looping: false,
         subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
@@ -40,11 +41,7 @@ class _VideoViewState extends State<VideoView> {
 
 
     return Scaffold(
-      body: Center(
-        child: AspectRatio(aspectRatio: 16 / 9,
-        child: BetterPlayer(controller: betterPlayerController),
-        ),
-      ),
+      body: BetterPlayer(controller: betterPlayerController),
     );
   }
 }
