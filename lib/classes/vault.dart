@@ -12,9 +12,36 @@ class Vault {
   late String name;
 
   Vault({required this.password, required this.name});
+  Vault.withList({
+    required this.password,
+    required this.name,
+    required this.itemList,
+  });
 
   void addFile(Item item) {
     itemList.add(item);
+  }
+
+  @override
+  String toString() {
+    return 'Vault(name: $name, password: $password, items: $itemList)';
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'password': password,
+      'items': itemList.map((i) => i.toJson()).toList(),
+    };
+  }
+
+  factory Vault.fromJson(Map<String, dynamic> json)
+  {
+    return Vault.withList(
+      name: json['name'],
+      password: json['password'],
+      itemList: (json['items'] as List).map((e) => Item.fromJson(e)).toList(),
+    );
   }
 }
 
@@ -81,20 +108,19 @@ class _VaultPageState extends State<VaultPage> {
                 );
                 if (file != null) {
                   // main.activevault!.itemList.add(Item(fileId: file.names[0]))
-                  for (int i = 0; i < file.count; i++)
-                  {
-                    
+                  for (int i = 0; i < file.count; i++) {
                     setState(() {
-                      main.activevault!.itemList.add(Item(fileId: file.names[i]!, type: "image"));
+                      main.activevault!.itemList.add(
+                        Item(fileId: file.names[i]!, type: "image"),
+                      );
                     });
                     await main.activevault!.itemList.last.getDirandFile();
-                    dynamic destination = '${main.activevault!.itemList.last.dir.path}/${main.activevault!.itemList.last.fileId}';
+                    dynamic destination =
+                        '${main.activevault!.itemList.last.dir.path}/${main.activevault!.itemList.last.fileId}';
                     dynamic source = File(file.paths[i]!);
                     main.activevault!.itemList.last.dir = destination;
                     await source.copy(destination);
-                    setState(() {
-                      
-                    });
+                    setState(() {});
                   }
                 }
               }
@@ -103,20 +129,19 @@ class _VaultPageState extends State<VaultPage> {
                   type: FileType.video,
                 );
                 if (file != null) {
-                  for (int i = 0; i < file.count; i++)
-                  {
-                    
+                  for (int i = 0; i < file.count; i++) {
                     setState(() {
-                      main.activevault!.itemList.add(Item(fileId: file.names[i]!, type: "video"));
+                      main.activevault!.itemList.add(
+                        Item(fileId: file.names[i]!, type: "video"),
+                      );
                     });
                     await main.activevault!.itemList.last.getDirandFile();
-                    dynamic destination = '${main.activevault!.itemList.last.dir.path}/${main.activevault!.itemList.last.fileId}';
+                    dynamic destination =
+                        '${main.activevault!.itemList.last.dir.path}/${main.activevault!.itemList.last.fileId}';
                     dynamic source = File(file.paths[i]!);
                     main.activevault!.itemList.last.dir = destination;
                     await source.copy(destination);
-                    setState(() {
-                      
-                    });
+                    setState(() {});
                   }
                 }
               }
@@ -153,9 +178,7 @@ class _VaultPageState extends State<VaultPage> {
                           main.activeitem.getDirandFile();
                           Navigator.pushNamed(context, '/textpad');
                         }
-                        if (main.activeitem.type == 'image') {
-                          
-                        }
+                        if (main.activeitem.type == 'image') {}
                         if (main.activeitem.type == 'video') {
                           Navigator.pushNamed(context, '/videoview');
                         }

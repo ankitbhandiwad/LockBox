@@ -14,7 +14,7 @@ class VideoView extends StatefulWidget {
 class _VideoViewState extends State<VideoView> {
   @override
   Widget build(BuildContext context) {
-    final file = File(main.activeitem.dir);
+    final file = File(main.activeitem.dir.path);
     final betterPlayerController = BetterPlayerController(
       const BetterPlayerConfiguration(
         autoPlay: false,

@@ -3,18 +3,19 @@ import 'package:vault/classes/items.dart';
 import 'package:vault/classes/textpad.dart';
 import 'package:vault/classes/vault.dart';
 import 'package:vault/classes/videoviewer.dart';
+import 'package:vault/filehandling/jsoncreator.dart' as jsoncreate;
 
-void main()
-{
-  runApp(MaterialApp(
-    initialRoute: '/home',
-    routes: {
-      '/home': (context) => Home(),
-      '/vault': (context) => VaultPage(),
-      '/textpad': (context) => Textpad(),
-      '/videoview': (context) => VideoView(),
-    },
-  )
+void main() {
+  runApp(
+    MaterialApp(
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => Home(),
+        '/vault': (context) => VaultPage(),
+        '/textpad': (context) => Textpad(),
+        '/videoview': (context) => VideoView(),
+      },
+    ),
   );
 }
 
@@ -42,75 +43,88 @@ class _HomeState extends State<Home> {
         actions: [
           ElevatedButton(
             onPressed: () {
-              // setState(() {
-              //   vaultlist.add(Vault(password: "111", name: "my first vault!"));
-              // });
-
-              showDialog(context: context,
-              builder: (BuildContext context)
-              {
-                return AlertDialog(
-                  content: Column(
-                    children: [
-                      TextField( //userinputname
-                        decoration: InputDecoration(
-                          hintText: 'Vault Name'
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    content: Column(
+                      children: [
+                        TextField(
+                          //userinputname
+                          decoration: InputDecoration(hintText: 'Vault Name'),
+                          onChanged: (value) {
+                            setState(() {
+                              userinputname = value;
+                            });
+                          },
                         ),
-                        onChanged: (value)
-                        {
-                          setState(() {
-                            userinputname = value;
-                          });
-                        },
-                      ),
-                      TextField( //userinputpassword
-                        decoration: InputDecoration(
-                          hintText: 'Vault Password'
+                        TextField(
+                          //userinputpassword
+                          decoration: InputDecoration(
+                            hintText: 'Vault Password',
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              userinputpassword = value;
+                            });
+                          },
                         ),
-                        onChanged: (value)
-                        {
-                          setState(() {
-                            userinputpassword = value;
-                          });
-                        },
-                      ),
-                      ElevatedButton(
-                        onPressed: ()
-                        {
-                        setState(() {
-                          vaultlist.add(Vault(password: userinputpassword, name: userinputname));
-                        });
-                        Navigator.of(context).pop();
-                        },
-                        child: Text("Submit"),
-                      )
-                      
-                    ],
-                  ),
-                );
-              }
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              vaultlist.add(
+                                Vault(
+                                  password: userinputpassword,
+                                  name: userinputname,
+                                ),
+                              );
+                            });
+                            Navigator.of(context).pop();
+                          },
+                          child: Text("Submit"),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               );
-
             },
-            child: Icon(Icons.add)
+            child: Icon(Icons.add),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              jsoncreate.Jsoncreator().printvaultlist();
+              jsoncreate.Jsoncreator().editjson();
+            },
+            child: Text("SAVE"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              vaultlist.clear();
+              vaultlist = await jsoncreate.Jsoncreator().loadVaultList();
+              setState(() {});
+            },
+            child: Text("LOAD"),
           ),
         ],
       ),
       body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+        ),
         itemCount: vaultlist.length,
-        itemBuilder: (context, index)
-        {
-          return Padding(padding: EdgeInsets.all(8),
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: EdgeInsets.all(8),
             child: Card(
               child: ListTile(
                 onTap: () {
                   setState(() {
                     activevaultpass = vaultlist[index];
                   });
-                  showDialog(context: context,
-                    builder: (BuildContext context)
-                    {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
                       return AlertDialog(
                         content: Column(
                           children: [
@@ -120,41 +134,36 @@ class _HomeState extends State<Home> {
                               ),
                               onChanged: (value) {
                                 userinputguess = value;
-                              }
+                              },
                             ),
-                              ElevatedButton(onPressed: () {
-                                if (userinputguess == activevaultpass!.password)
-                                {
+                            ElevatedButton(
+                              onPressed: () {
+                                if (userinputguess ==
+                                    activevaultpass!.password) {
                                   setState(() {
                                     activevault = vaultlist[index];
                                     activevaultpass = null;
                                   });
                                   Navigator.of(context).pop();
                                   Navigator.pushNamed(context, '/vault');
-                                }
-                                else
-                                {
+                                } else {
                                   Navigator.of(context).pop();
                                 }
                               },
-                              child: Text("Submit"))
+                              child: Text("Submit"),
+                            ),
                           ],
-                        )
+                        ),
                       );
-                    }
-                    );
-
+                    },
+                  );
                 },
                 // leading: Icon(Icons.usb),
                 title: Text(vaultlist[index].name),
-                subtitle: ElevatedButton
-                (
+                subtitle: ElevatedButton(
                   onPressed: () async {
-
-                    for (int i = 0; i < activevault!.itemList.length; i++)
-                    {
-                      if (await activevault!.itemList[i].file.exists())
-                      {
+                    for (int i = 0; i < activevault!.itemList.length; i++) {
+                      if (await activevault!.itemList[i].file.exists()) {
                         await activevault!.itemList[i].file.delete();
                       }
                     }
@@ -163,12 +172,12 @@ class _HomeState extends State<Home> {
                       vaultlist.removeAt(index);
                     });
                   },
-                  child: Icon(Icons.delete)
+                  child: Icon(Icons.delete),
                 ),
               ),
             ),
           );
-        }
+        },
       ),
     );
   }
