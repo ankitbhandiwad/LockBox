@@ -1,4 +1,4 @@
-import 'dart:io';
+// import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:better_player_plus/better_player_plus.dart';
@@ -14,7 +14,7 @@ class VideoView extends StatefulWidget {
 class _VideoViewState extends State<VideoView> {
   @override
   Widget build(BuildContext context) {
-    final file = File(main.activeitem.dir.path);
+    final file = main.activeitem.file;
     final betterPlayerController = BetterPlayerController(
       const BetterPlayerConfiguration(
         fit: BoxFit.contain,

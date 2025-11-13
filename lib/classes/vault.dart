@@ -5,13 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:vault/main.dart' as main;
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:file_picker/file_picker.dart';
-// import 'package:isar/isar.dart';
-// part 'vault.g.dart';
 
-// @collection
 class Vault {
 
-  // Id id = Isar.autoIncrement;
 
   late String password;
   List<Item> itemList = [];
@@ -124,7 +120,7 @@ class _VaultPageState extends State<VaultPage> {
                     dynamic destination =
                         '${main.activevault!.itemList.last.dir.path}/${main.activevault!.itemList.last.fileId}';
                     dynamic source = File(file.paths[i]!);
-                    main.activevault!.itemList.last.dir = destination;
+                    main.activevault!.itemList.last.file = File(destination);
                     await source.copy(destination);
                     setState(() {});
                   }
@@ -132,13 +128,13 @@ class _VaultPageState extends State<VaultPage> {
               }
               if (value == 'video') {
                 FilePickerResult? file = await FilePicker.platform.pickFiles(
-                  type: FileType.custom,
-                  allowedExtensions: [
-                    // video
-                    'mp4', 'mkv', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mpeg', 'mpg', '3gp', 'm4v', 'ts',
-                    // audio
-                    'mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a', 'wma', 'opus', 'aiff', 'alac',
-                  ]
+                  type: FileType.video,
+                  // allowedExtensions: [
+                  //   // video
+                  //   'mp4', 'mkv', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mpeg', 'mpg', '3gp', 'm4v', 'ts',
+                  //   // audio
+                  //   'mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a', 'wma', 'opus', 'aiff', 'alac',
+                  // ]
                 );
                 if (file != null) {
                   for (int i = 0; i < file.count; i++) {
@@ -151,7 +147,7 @@ class _VaultPageState extends State<VaultPage> {
                     dynamic destination =
                         '${main.activevault!.itemList.last.dir.path}/${main.activevault!.itemList.last.fileId}';
                     dynamic source = File(file.paths[i]!);
-                    main.activevault!.itemList.last.dir = destination;
+                    // main.activevault!.itemList.last.dir = destination;
                     await source.copy(destination);
                     setState(() {});
                   }
@@ -214,8 +210,8 @@ class _VaultPageState extends State<VaultPage> {
                       fit: BoxFit.contain,
                       child: main.activevault!.itemList[index].type == 'image'
                           ? InstaImageViewer(
-                              child: Image.asset(
-                                '${main.activevault!.itemList[index].dir}',
+                              child: Image.file(
+                                main.activevault!.itemList[index].file,
                                 fit: BoxFit.contain,
                               ),
                             )
