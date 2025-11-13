@@ -5,8 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:vault/main.dart' as main;
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:file_picker/file_picker.dart';
+// import 'package:isar/isar.dart';
+// part 'vault.g.dart';
 
+// @collection
 class Vault {
+
+  // Id id = Isar.autoIncrement;
+
   late String password;
   List<Item> itemList = [];
   late String name;
@@ -126,7 +132,13 @@ class _VaultPageState extends State<VaultPage> {
               }
               if (value == 'video') {
                 FilePickerResult? file = await FilePicker.platform.pickFiles(
-                  type: FileType.video,
+                  type: FileType.custom,
+                  allowedExtensions: [
+                    // video
+                    'mp4', 'mkv', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mpeg', 'mpg', '3gp', 'm4v', 'ts',
+                    // audio
+                    'mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a', 'wma', 'opus', 'aiff', 'alac',
+                  ]
                 );
                 if (file != null) {
                   for (int i = 0; i < file.count; i++) {
@@ -149,7 +161,7 @@ class _VaultPageState extends State<VaultPage> {
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'text', child: Text('Text')),
               const PopupMenuItem(value: 'image', child: Text('Image')),
-              const PopupMenuItem(value: 'video', child: Text('Video')),
+              const PopupMenuItem(value: 'video', child: Text('Video/Audio')),
             ],
             child: Icon(Icons.add),
           ),
@@ -157,7 +169,7 @@ class _VaultPageState extends State<VaultPage> {
       ),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+          crossAxisCount: 2,
         ),
         itemCount: main.activevault!.itemList.length,
         itemBuilder: (context, index) {
