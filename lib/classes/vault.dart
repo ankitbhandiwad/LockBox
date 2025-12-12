@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:vault/classes/items.dart';
 import 'package:flutter/material.dart';
 import 'package:vault/main.dart' as main;
-import 'package:insta_image_viewer/insta_image_viewer.dart';
+// import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:vault/filehandling/jsoncreator.dart' as jsoncreate;
+// import 'package:extended_image/extended_image.dart';
 
 class Vault {
-
-
   late String password;
   List<Item> itemList = [];
   late String name;
@@ -37,8 +37,7 @@ class Vault {
     };
   }
 
-  factory Vault.fromJson(Map<String, dynamic> json)
-  {
+  factory Vault.fromJson(Map<String, dynamic> json) {
     return Vault.withList(
       name: json['name'],
       password: json['password'],
@@ -89,6 +88,7 @@ class _VaultPageState extends State<VaultPage> {
                                 main.activevault!.itemList.add(
                                   Item(fileId: userinputfileId, type: 'text'),
                                 );
+                                jsoncreate.Jsoncreator().editjson();
                               });
                               Navigator.of(context).pop();
                             },
@@ -122,7 +122,9 @@ class _VaultPageState extends State<VaultPage> {
                     dynamic source = File(file.paths[i]!);
                     main.activevault!.itemList.last.file = File(destination);
                     await source.copy(destination);
-                    setState(() {});
+                    setState(() {
+                      jsoncreate.Jsoncreator().editjson();
+                    });
                   }
                 }
               }
@@ -149,7 +151,9 @@ class _VaultPageState extends State<VaultPage> {
                     dynamic source = File(file.paths[i]!);
                     // main.activevault!.itemList.last.dir = destination;
                     await source.copy(destination);
-                    setState(() {});
+                    setState(() {
+                      jsoncreate.Jsoncreator().editjson();
+                    });
                   }
                 }
               }
@@ -186,7 +190,11 @@ class _VaultPageState extends State<VaultPage> {
                           main.activeitem.getDirandFile();
                           Navigator.pushNamed(context, '/textpad');
                         }
-                        if (main.activeitem.type == 'image') {}
+                        if (main.activeitem.type == 'image') {
+                          Navigator.pushNamed(context, '/imageview',
+                          arguments: index,
+                          );
+                        }
                         if (main.activeitem.type == 'video') {
                           Navigator.pushNamed(context, '/videoview');
                         }
@@ -201,6 +209,7 @@ class _VaultPageState extends State<VaultPage> {
                           }
                           setState(() {
                             main.activevault!.itemList.removeAt(index);
+                            jsoncreate.Jsoncreator().editjson();
                           });
                         },
                         child: Icon(Icons.delete),
@@ -209,13 +218,18 @@ class _VaultPageState extends State<VaultPage> {
                     FittedBox(
                       fit: BoxFit.contain,
                       child: main.activevault!.itemList[index].type == 'image'
-                          ? InstaImageViewer(
-                              child: Image.file(
-                                main.activevault!.itemList[index].file,
-                                fit: BoxFit.contain,
-                              ),
-                            )
-                          : Container(),
+                          // ? InstaImageViewer(
+                          //     child: Image.file(
+                          //       main.activevault!.itemList[index].file,
+                          //       fit: BoxFit.contain,
+                          //     ),
+                          //   )
+                          // ? ExtendedImage.file(
+                          //   main.activevault!.itemList[index].file,
+                          //   mode: ExtendedImageMode.gesture
+                          // )
+                          ? Container()
+                          : Container(), //thumbnail
                     ),
                   ],
                 ),

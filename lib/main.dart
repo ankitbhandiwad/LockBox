@@ -4,8 +4,11 @@ import 'package:vault/classes/textpad.dart';
 import 'package:vault/classes/vault.dart';
 import 'package:vault/classes/videoviewer.dart';
 import 'package:vault/filehandling/jsoncreator.dart' as jsoncreate;
+import 'package:vault/classes/imageviewer.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  vaultlist = await jsoncreate.Jsoncreator().loadVaultList();
   runApp(
     MaterialApp(
       initialRoute: '/home',
@@ -14,6 +17,7 @@ void main() {
         '/vault': (context) => VaultPage(),
         '/textpad': (context) => Textpad(),
         '/videoview': (context) => VideoView(),
+        '/imageview': (context) => ImageView(),
       },
     ),
   );
@@ -78,6 +82,7 @@ class _HomeState extends State<Home> {
                                   name: userinputname,
                                 ),
                               );
+                              jsoncreate.Jsoncreator().editjson();
                             });
                             Navigator.of(context).pop();
                           },
@@ -93,7 +98,7 @@ class _HomeState extends State<Home> {
           ),
           ElevatedButton(
             onPressed: () {
-              jsoncreate.Jsoncreator().printvaultlist();
+              // jsoncreate.Jsoncreator().printvaultlist();
               jsoncreate.Jsoncreator().editjson();
             },
             child: Text("SAVE"),
@@ -162,14 +167,21 @@ class _HomeState extends State<Home> {
                 title: Text(vaultlist[index].name),
                 subtitle: ElevatedButton(
                   onPressed: () async {
-                    for (int i = 0; i < activevault!.itemList.length; i++) {
-                      if (await activevault!.itemList[i].file.exists()) {
-                        await activevault!.itemList[i].file.delete();
+                    // for (int i = 0; i < activevault!.itemList.length; i++) {
+                    //   if (await activevault!.itemList[i].file.exists()) {
+                    //     await activevault!.itemList[i].file.delete();
+                    //   }
+                    // }
+                    Vault target = vaultlist[index];
+
+                    for (int i = 0; i < target.itemList.length; i++) {
+                      if (await target.itemList[i].file.exists()) {
+                        await target.itemList[i].file.delete();
                       }
                     }
-
                     setState(() {
                       vaultlist.removeAt(index);
+                      jsoncreate.Jsoncreator().editjson();
                     });
                   },
                   child: Icon(Icons.delete),

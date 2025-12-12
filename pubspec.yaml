@@ -38,6 +38,10 @@ dependencies:
   insta_image_viewer: ^1.0.4
   file_picker: ^10.3.1
   better_player_plus: ^1.0.8
+  extended_image: ^10.0.1
+  share_plus: ^12.0.1
+  image_gallery_saver: ^2.0.3
+  image_gallery_saver_plus: ^4.0.1
   # isar: ^3.1.0+1
   # isar_flutter_libs: ^3.1.0+1
   

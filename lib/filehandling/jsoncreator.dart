@@ -7,16 +7,16 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 
 class Jsoncreator {
-  printvaultlist() async { 
-    for (var element in main.vaultlist) {
-      print(element);
-    }
-    final dir = await getApplicationDocumentsDirectory();
-    final file = File('${dir.path}/vaultdata.json');
-    print('JSON FULL PATH = ${file.path}');
+  // printvaultlist() async { 
+  //   for (var element in main.vaultlist) {
+  //     // print(element);
+  //   }
+  //   final dir = await getApplicationDocumentsDirectory();
+  //   final file = File('${dir.path}/vaultdata.json');
+  //   // print('JSON FULL PATH = ${file.path}');
 
 
-  }
+  // }
 
   String encodeVaultList(List<Vault> vaults) {
     return jsonEncode(vaults.map((v) => v.toJson()).toList());
